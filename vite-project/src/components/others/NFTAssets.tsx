@@ -6,7 +6,7 @@ const NFTAssets = ({ assets, truncateAddress, onSelectAsset, selectedAssets }) =
     <h2 className="mt-4">NFT Assets</h2>
     <div className="flex flex-wrap gap-4">
       {assets.map((asset, index) => {
-        const isSelected = selectedAssets.includes(asset);
+        const isSelected = selectedAssets.some((a) => a.token_address === asset.token_address && a.token_id === asset.token_id && a.type === 'NFT');
         return (
           <Card
             key={index}
@@ -18,9 +18,9 @@ const NFTAssets = ({ assets, truncateAddress, onSelectAsset, selectedAssets }) =
               <CardDescription>ID: {asset.token_id}</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>Dirección: {truncateAddress(asset.token_address)}</p>
+              <p>Address: {truncateAddress(asset.token_address)}</p>
               <p>Blockchain: {asset.blockchain}</p>
-              <p>Cantidad: {asset.quantity}</p>
+              <p>Quantity: {asset.quantity}</p>
               {asset.image_url && (
                 <img src={asset.image_url} alt={asset.name} width="50" />
               )}

@@ -9,41 +9,64 @@ const setisConfirming = (value: boolean) => {
 };
 
 export default {
-    bundletokens: async (selectedTokens: any[], selectedNFTs: any[]) => {
+    bundletokens: async (selectedAssets: any []) => {
         setisConfirming(true);
-        console.log("Selected Tokens:", selectedTokens);
-        console.log("Selected NFTs:", selectedNFTs);
+        console.log("Selected Assets:", selectedAssets);
 
         const { signer } = await AccountService.getAccountData();
         const bundler = await getBundler();
 
-        const tokenAssets = selectedTokens.map((token) => ({
-            category: 0,
-            assetAddress: token.token_address,
-            id: 0,
-            amount: ethers.parseUnits(token.quantity, 18) // Asegurarse de que la cantidad esté en la unidad correcta
-        }));
-        console.log("Token Assets:", tokenAssets);
+        const assets = selectedAssets.map((asset) => {
+            if (asset.type === 'ERC20') {
+                return {
+                    category: 0,
+                    assetAddress: asset.token_address || asset.address,
+                    id: 0,
+                    amount: ethers.parseUnits(asset.quantity.toString(), 18),
+                };
+            } else {
+                return {
+                    category: 1,
+                    assetAddress: asset.token_address || asset.address,
+                    id: asset.token_id || asset.id,
+                    amount: 1,
+                };
+            }
+        });
+        console.log("Mapped Assets:", assets);;
 
-        const nftAssets = selectedNFTs.map((nft) => ({
-            category: 1,
-            assetAddress: nft.token_address,
-            id: nft.token_id,
-            amount: 1 // Los NFTs generalmente tienen una cantidad de 1
-        }));
-        console.log("NFT Assets:", nftAssets);
-
-        const assets = [...tokenAssets, ...nftAssets];
-        console.log("All Assets:", assets);
 
         try {
-            const tx = await bundler.connect(signer).create(assets, { gasLimit: GAS_LIMIT }); // Asegurarse de pasar todos los activos y establecer el límite de gas
+            const tx = await bundler.connect(signer).create(assets, { gasLimit: GAS_LIMIT }); 
             const receipt = await tx.wait();
             setisConfirming(false);
             return receipt.transactionHash;
         } catch (error) {
             setisConfirming(false);
             console.error("Error bundling assets:", error);
+            throw error;
+        }
+    },
+    unbundle: async (selectedAssets: any[]) => {
+        setisConfirming(true);
+        const tokenId = selectedAssets.find((asset) => asset.type !== 'ERC20')?.token_id;
+    console.log("Unbundling Token ID:", tokenId);
+    if (!tokenId) {
+        setisConfirming(false);
+        throw new Error("No NFT selected for unbundling.");
+      }
+
+        const { signer } = await AccountService.getAccountData();
+        const bundler = await getBundler();
+
+        try {
+            const tx = await bundler.connect(signer).unwrap(tokenId, { gasLimit: GAS_LIMIT }); 
+            const receipt = await tx.wait();
+            setisConfirming(false);
+            return receipt.transactionHash;
+        } catch (error) {
+            setisConfirming(false);
+            console.error("Error unbundling asset:", error);
             throw error;
         }
     }

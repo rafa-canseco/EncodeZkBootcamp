@@ -6,7 +6,7 @@ const ERC20Assets = ({ assets, truncateAddress, onSelectAsset, selectedAssets, w
     <h2 className="mt-4">ERC20 Assets</h2>
     <div className="flex flex-wrap gap-4">
       {assets.map((asset, index) => {
-        const isSelected = selectedAssets.includes(asset);
+        const isSelected = selectedAssets.some((a) => a.token_address === asset.token_address && a.type === 'ERC20');
         return (
           <Card
             key={index}
@@ -18,9 +18,10 @@ const ERC20Assets = ({ assets, truncateAddress, onSelectAsset, selectedAssets, w
               <CardDescription>Symbol: {asset.symbol}</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>Dirección: {truncateAddress(asset.token_address)}</p>
+              <p>Address: {truncateAddress(asset.token_address)}</p>
               <p>Blockchain: {asset.blockchain}</p>
-              <p>Cantidad: {asset.quantity}</p>
+              <p>Quantity: {asset.quantity}</p>
+              <p>Price: {asset.asset_price}</p>
               {asset.image_url && (
                 <img src={asset.image_url} alt={asset.name} width="50" />
               )}

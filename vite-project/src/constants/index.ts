@@ -9,7 +9,8 @@ export const tokenSymbols = [
     "DAI",
     "PWNERC20",
     "WETH",
-    "NFT"
+    "NFT",
+    "ETH"
 ]
 
 export const tokenInfos = {
