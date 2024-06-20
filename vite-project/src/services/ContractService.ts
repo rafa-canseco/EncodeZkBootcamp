@@ -16,7 +16,6 @@ export const getBundler = () => {
 };
 
 export const getToken = (symbol: TokenSymbol) => {
-    console.log(`getToken called with symbol: ${symbol}`);
     if (!tokenInfos[symbol]) {
         throw new Error(`Token symbol ${symbol} is not defined in tokenInfos`);
     }

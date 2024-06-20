@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import ERC20Assets from "../components/others/ERC20Assets";
 import NFTAssets from "../components/others/NFTAssets";
+import BundleService from "../services/BundleService"; // Importar BundleService
 
 const Landing = ({ walletAddress }) => {
   const [erc20Assets, setErc20Assets] = useState([]);
@@ -60,8 +61,9 @@ const Landing = ({ walletAddress }) => {
 
   const handleSelectAsset = (asset) => {
     setSelectedAssets((prevSelected) => {
-      if (prevSelected.includes(asset)) {
-        return prevSelected.filter((a) => a !== asset);
+      const isSelected = prevSelected.some((a) => a.token_id === asset.token_id && a.token_address === asset.token_address);
+      if (isSelected) {
+        return prevSelected.filter((a) => !(a.token_id === asset.token_id && a.token_address === asset.token_address));
       } else {
         return [...prevSelected, asset];
       }
@@ -69,7 +71,15 @@ const Landing = ({ walletAddress }) => {
   };
 
   const handleBundle = async () => {
-    console.log("Assets bundled:", selectedAssets);
+    const selectedTokens = selectedAssets.filter(asset => asset.type === 'ERC20');
+    const selectedNFTs = selectedAssets.filter(asset => asset.type !== 'ERC20');
+  
+    try {
+      const bundleId = await BundleService.bundletokens(selectedTokens, selectedNFTs);
+      console.log("Assets bundled with ID:", bundleId);
+    } catch (error) {
+      console.error("Error bundling assets:", error);
+    }
   };
 
   return (
@@ -99,8 +109,10 @@ const Landing = ({ walletAddress }) => {
                 truncateAddress={truncateAddress}
                 onSelectAsset={handleSelectAsset}
                 selectedAssets={selectedAssets}
-                walletAddress={walletAddress}  
               />
+              <Button onClick={handleBundle} disabled={selectedAssets.length === 0}>
+                Bundle Assets
+              </Button>
             </>
           )}
         </>
@@ -109,6 +121,6 @@ const Landing = ({ walletAddress }) => {
       )}
     </div>
   );
-};
+}
 
 export default Landing;

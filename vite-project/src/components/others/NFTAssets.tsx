@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import NftApprovalButton from "./NftApprovalButton";
 
-const NFTAssets = ({ assets, truncateAddress, onSelectAsset, selectedAssets, walletAddress }) => (
+const NFTAssets = ({ assets, truncateAddress, onSelectAsset, selectedAssets }) => (
   <div>
     <h2 className="mt-4">NFT Assets</h2>
     <div className="flex flex-wrap gap-4">
@@ -24,7 +24,7 @@ const NFTAssets = ({ assets, truncateAddress, onSelectAsset, selectedAssets, wal
               {asset.image_url && (
                 <img src={asset.image_url} alt={asset.name} width="50" />
               )}
-              <NftApprovalButton spenderAddress={walletAddress} tokenId={asset.token_id} />
+              <NftApprovalButton tokenId={asset.token_id} />
             </CardContent>
           </Card>
         );

@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { ClipLoader } from "react-spinners";
 import useNftApproval from "../../hooks/useNftApproval";
 
-const NftApprovalButton = ({ spenderAddress, tokenId }) => {
-  const { isApproved, isAskingPermission, isApproving, approve } = useNftApproval(spenderAddress, tokenId);
+const NftApprovalButton = ({ tokenId }) => {
+  const { isApproved, isAskingPermission, isApproving, approve } = useNftApproval( tokenId);
   const [text, setText] = useState('Approve');
 
   useEffect(() => {

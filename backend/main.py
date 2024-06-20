@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from supabase import create_client
 from dotenv import load_dotenv
-from functions.blockchain_requests import fetch_NFT_holdings_simplehash, fetch_ERC20_holdings_mobula
+from functions.blockchain_requests import fetch_erc20_holdings_moralis,fetch_NFT_holdings_moralis
 from functions.db_requests import create_address_table, save_erc20_assets, save_nft_assets, check_table_exists, delete_erc20_assets, delete_nft_assets
 import os
 
@@ -43,8 +43,8 @@ async def manage_assets(data: dict):
     all_nft_assets = []
     
     for blockchain in blockchains:
-        erc20_assets = fetch_ERC20_holdings_mobula(address, blockchain)
-        nft_assets = fetch_NFT_holdings_simplehash(address, blockchain)
+        erc20_assets = fetch_erc20_holdings_moralis(address, blockchain)
+        nft_assets = fetch_NFT_holdings_moralis(address, blockchain)
         
         if not check_table_exists(address, blockchain):
             create_address_table(address, blockchain)
@@ -58,7 +58,7 @@ async def manage_assets(data: dict):
         all_erc20_assets.extend(erc20_assets)
         all_nft_assets.extend(nft_assets)
     
-    return {"status": "assets_managed", "erc20_assets": all_erc20_assets, "nft_assets": all_nft_assets}
+    return await get_assets(address, blockchains[0])
 
 @app.get("/get_assets")
 async def get_assets(address: str, blockchain: str):

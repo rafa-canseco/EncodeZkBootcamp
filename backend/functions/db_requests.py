@@ -28,7 +28,9 @@ def save_erc20_assets(address: str, blockchain: str, erc20_assets: list):
             "blockchain": blockchain,
             "symbol": asset["asset"],
             "name": asset["name"],
-            "quantity": asset["quantity"]
+            "quantity": asset["quantity"],
+            "token_address": asset["token_address"],
+            "asset_price": asset["asset_price"] if asset["asset_price"] is not None else 0
         }).execute()
 
 def save_nft_assets(address: str, blockchain: str, nft_assets: list):
@@ -36,7 +38,9 @@ def save_nft_assets(address: str, blockchain: str, nft_assets: list):
         supabase.table("nft_assets").insert({
             "address": address,
             "blockchain": blockchain,
-            "name": asset["name"],
-            "quantity": asset["quantity"],
-            "image_url": asset["image_url"]
+            "name": asset["name"] if asset["name"] is not None else "",
+            "quantity": asset["quantity"] if asset["quantity"] is not None else 0,
+            "image_url": asset["image_url"] if asset["image_url"] is not None else "",
+            "token_address": asset["token_address"] if asset["token_address"] is not None else "",
+            "token_id": asset["token_id"] if asset.get("token_id") is not None else ""
         }).execute()
