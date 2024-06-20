@@ -11,12 +11,14 @@ function App() {
   };
 
   return (
-    <Router>
-      <Navbar onWalletConnected={handleWalletConnected} />
-      <Routes>
-        <Route path="/" element={<Landing walletAddress={walletAddress} />} />
-      </Routes>
-    </Router>
+    <div className="bg-gray-300">
+      <Router>
+        <Navbar onWalletConnected={handleWalletConnected} />
+        <Routes>
+          <Route path="/" element={<Landing walletAddress={walletAddress} />} />
+        </Routes>
+      </Router>
+    </div>
   );
 }
 

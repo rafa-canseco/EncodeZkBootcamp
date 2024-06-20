@@ -1,16 +1,21 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import ERC20Assets from "../components/others/ERC20Assets";
+import NFTAssets from "../components/others/NFTAssets";
 
 const Landing = ({ walletAddress }) => {
   const [erc20Assets, setErc20Assets] = useState([]);
   const [nftAssets, setNftAssets] = useState([]);
+  const [selectedAssets, setSelectedAssets] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchAssets = async () => {
     try {
       const response = await axios.get("http://localhost:8000/get_assets", {
         params: {
           address: walletAddress,
-          blockchain: "ethereum",
+          blockchain: "sepolia",
         },
       });
       const data = response.data;
@@ -23,10 +28,11 @@ const Landing = ({ walletAddress }) => {
   };
 
   const manageAssets = async () => {
+    setLoading(true);
     try {
       const response = await axios.post("http://localhost:8000/manage_assets", {
         address: walletAddress,
-        blockchains: ["ethereum"],
+        blockchains: ["sepolia"],
       });
       const data = response.data;
       console.log("Manage Assets Response:", data);
@@ -34,6 +40,8 @@ const Landing = ({ walletAddress }) => {
       setNftAssets(data.nft_assets);
     } catch (error) {
       console.error("Error managing assets:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,50 +51,58 @@ const Landing = ({ walletAddress }) => {
     }
   }, [walletAddress]);
 
+  const truncateAddress = (address) => {
+    const maxLength = 20;
+    return address.length > maxLength
+      ? `${address.slice(0, maxLength)}...`
+      : address;
+  };
+
+  const handleSelectAsset = (asset) => {
+    setSelectedAssets((prevSelected) => {
+      if (prevSelected.includes(asset)) {
+        return prevSelected.filter((a) => a !== asset);
+      } else {
+        return [...prevSelected, asset];
+      }
+    });
+  };
+
+  const handleBundle = async () => {
+    console.log("Assets bundled:", selectedAssets);
+  };
+
   return (
     <div>
       <p className="text-lg underline">Bienvenido a Nuestra Página</p>
       {walletAddress ? (
         <>
-          <p className="mt-4">Dirección de la Wallet: {walletAddress}</p>
-          <button
-            onClick={manageAssets}
-            className="mt-4 p-2 bg-blue-500 text-white"
-          >
-            Actualizar Activos
-          </button>
-          <div>
-            <h2 className="mt-4">ERC20 Assets</h2>
-            <ul>
-              {erc20Assets.map((asset, index) => (
-                <li key={index}>
-                  <p>Dirección: {asset.address}</p>
-                  <p>Blockchain: {asset.blockchain}</p>
-                  <p>ID: {asset.id}</p>
-                  <p>Nombre: {asset.name}</p>
-                  <p>Cantidad: {asset.quantity}</p>
-                  <p>Símbolo: {asset.symbol}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h2 className="mt-4">NFT Assets</h2>
-            <ul>
-              {nftAssets.map((asset, index) => (
-                <li key={index}>
-                  <p>Dirección: {asset.address}</p>
-                  <p>Blockchain: {asset.blockchain}</p>
-                  <p>ID: {asset.id}</p>
-                  <p>Nombre: {asset.name}</p>
-                  <p>Cantidad: {asset.quantity}</p>
-                  {asset.image_url && (
-                    <img src={asset.image_url} alt={asset.name} width="50" />
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
+          <p className="mt-4">
+            Dirección de la Wallet: {truncateAddress(walletAddress)}
+          </p>
+          <Button onClick={manageAssets} disabled={loading}>
+            {loading ? "Actualizando..." : "Actualizar Activos"}
+          </Button>
+          {loading ? (
+            <p className="mt-4">Cargando activos...</p>
+          ) : (
+            <>
+              <ERC20Assets
+                assets={erc20Assets}
+                truncateAddress={truncateAddress}
+                onSelectAsset={handleSelectAsset}
+                selectedAssets={selectedAssets}
+                walletAddress={walletAddress}  
+              />
+              <NFTAssets
+                assets={nftAssets}
+                truncateAddress={truncateAddress}
+                onSelectAsset={handleSelectAsset}
+                selectedAssets={selectedAssets}
+                walletAddress={walletAddress}  
+              />
+            </>
+          )}
         </>
       ) : (
         <p className="mt-4">Por favor, conecta tu wallet.</p>
