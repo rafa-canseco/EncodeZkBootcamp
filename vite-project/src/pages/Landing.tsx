@@ -103,7 +103,7 @@ const Landing = ({ walletAddress }) => {
       setTimeout(() => {
         setMessage("");
         manageAssets();
-      }, 10000); // 10 segundos de retraso
+      }, 10000); 
     } catch (error) {
       console.error("Error unbundling assets:", error);
     } finally {
@@ -112,28 +112,26 @@ const Landing = ({ walletAddress }) => {
   };
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col items-center justify-center">
       {walletAddress ? (
         <>
-          <p className="mt-4">
-            Wallet Address: {truncateAddress(walletAddress)}
-          </p>
-          <Button onClick={manageAssets} disabled={loading}>
-            {loading ? "Updating..." : "Update Assets"}
-          </Button>
+          <div className="flex space-x-2 mt-4">
+            <Button onClick={manageAssets} disabled={loading}>
+              {loading ? "Updating..." : "Update Assets"}
+            </Button>
+            <Button onClick={handleBundle} disabled={selectedAssets.length === 0 || processing}>
+              Bundle Assets
+            </Button>
+            <Button onClick={handleUnbundle} disabled={selectedAssets.length === 0 || processing}>
+              Unbundle Assets
+            </Button>
+          </div>
           {loading ? (
             <p className="mt-4">Loading assets...</p>
           ) : (
             <>
-              <div className="flex space-x-2 mt-4">
-                <Button onClick={handleBundle} disabled={selectedAssets.length === 0 || processing}>
-                  Bundle Assets
-                </Button>
-                <Button onClick={handleUnbundle} disabled={selectedAssets.length === 0 || processing}>
-                  Unbundle Assets
-                </Button>
-              </div>
               {message && <p className="mt-4">{message}</p>}
+              <div className="text-center text-2xl mt-4">ERC20 Assets</div>
               <ERC20Assets
                 assets={erc20Assets}
                 truncateAddress={truncateAddress}
@@ -141,6 +139,7 @@ const Landing = ({ walletAddress }) => {
                 selectedAssets={selectedAssets}
                 walletAddress={walletAddress}  
               />
+              <div className="text-center text-2xl mt-4">NFT Assets</div>
               <NFTAssets
                 assets={nftAssets}
                 truncateAddress={truncateAddress}
