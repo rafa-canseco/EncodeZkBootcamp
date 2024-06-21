@@ -22,7 +22,8 @@
     "react-router-dom": "^6.23.1",
     "react-spinners": "^0.13.8",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "vercel": "latest"
   },
   "devDependencies": {
     "@types/node": "^20.14.5",

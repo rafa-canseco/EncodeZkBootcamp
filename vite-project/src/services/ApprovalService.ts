@@ -1,10 +1,11 @@
 import { contracts, tokenInfos, getBundleAddress } from "../constants";
 import AccountService from "./AccountService";
 import { getToken, getNft } from "./ContractService";
-import {  ChainId } from "../types/index";
+import { ChainId, TokenSymbol } from "../types/index";
 
-const getTokenAddress = (tokenSymbol: string, chainId: ChainId): string => {
-  const tokenInfo = tokenInfos[tokenSymbol];
+const getTokenAddress = (tokenSymbol: TokenSymbol, chainId: ChainId): string => {
+  const tokenInfoMap: any = tokenInfos;
+  const tokenInfo = tokenInfoMap[tokenSymbol];
   if (!tokenInfo) {
     throw new Error(`Token symbol ${tokenSymbol} is not defined in tokenInfos`);
   }
@@ -33,28 +34,30 @@ const getNftAddress = (chainId: ChainId): string => {
 };
 
 export default {
-  isApprovedToken: async (tokenSymbol: string, chainId: ChainId) => {
+  isApprovedToken: async (tokenSymbol: TokenSymbol, chainId: ChainId) => {
     const tokenAddress = getTokenAddress(tokenSymbol, chainId);
-    const contract = getToken(tokenAddress);
+    const contract = getToken(tokenAddress) as any;
     const { walletAddress } = await AccountService.getAccountData();
     const bundleAddress = getBundleAddress(chainId);
     const allowance = await contract.allowance(walletAddress, bundleAddress);
-    const maxAllowance = tokenInfos[tokenSymbol].maxAllowance;
+    const tokenInfoMap: any = tokenInfos;
+    const maxAllowance = tokenInfoMap[tokenSymbol].maxAllowance;
     return allowance.toString() - maxAllowance === 0;
   },
   approveTokens: async (
-    tokenSymbol: string,
+    tokenSymbol: TokenSymbol,
     setIsApproving: (value: boolean) => void,
     setIsAskingPermission: (value: boolean) => void,
     chainId: ChainId
   ) => {
     const tokenAddress = getTokenAddress(tokenSymbol, chainId);
-    const contract = getToken(tokenAddress);
+    const contract = getToken(tokenAddress) as any;
     const { signer } = await AccountService.getAccountData();
     const bundleAddress = getBundleAddress(chainId);
 
     try {
-      const maxAllowance = tokenInfos[tokenSymbol].maxAllowance;
+      const tokenInfoMap: any = tokenInfos;
+      const maxAllowance = tokenInfoMap[tokenSymbol].maxAllowance;
 
       const tx = await contract
         .connect(signer)
@@ -74,7 +77,7 @@ export default {
   },
   isApprovedNft: async (chainId: ChainId) => {
     const nftAddress = getNftAddress(chainId);
-    const contract = getNft(nftAddress);
+    const contract = getNft(nftAddress) as any;
 
     const { walletAddress } = await AccountService.getAccountData();
     const bundleAddress = getBundleAddress(chainId);
@@ -91,7 +94,7 @@ export default {
     chainId: ChainId
   ) => {
     const nftAddress = getNftAddress(chainId);
-    const contract = getNft(nftAddress);
+    const contract = getNft(nftAddress) as any;
     const { signer } = await AccountService.getAccountData();
     const bundleAddress = getBundleAddress(chainId);
 

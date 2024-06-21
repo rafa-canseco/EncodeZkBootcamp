@@ -85,3 +85,6 @@ export interface NavbarProps {
     chainId: ChainId;
   }
 
+  export interface TokenInfoMap {
+    [key: string]: TokenInfo;
+  }

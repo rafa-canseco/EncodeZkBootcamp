@@ -18,7 +18,7 @@ const executeTransaction = async (
 ) => {
   try {
     const tx = await transactionFunction();
-    const receipt = await tx.wait();
+    const receipt = await (tx as any).wait();
     return receipt.transactionHash;
   } catch (error) {
     console.error(errorMessage, error);
@@ -44,7 +44,7 @@ export default {
     console.log("Mapped Assets:", assets);
 
     return executeTransaction(
-      () => bundler.connect(signer).create(assets, { gasLimit: GAS_LIMIT }),
+      () => (bundler as any).connect(signer).create(assets, { gasLimit: GAS_LIMIT }),
       "Error bundling assets:"
     );
   },
@@ -60,7 +60,7 @@ export default {
     const bundler = await getBundler(getBundleAddress(chainId));
 
     return executeTransaction(
-      () => bundler.connect(signer).unwrap(tokenId, { gasLimit: GAS_LIMIT }),
+      () => (bundler as any).connect(signer).unwrap(tokenId, { gasLimit: GAS_LIMIT }),
       "Error unbundling asset:"
     );
   }

@@ -17,9 +17,12 @@ const getSigner = async () => {
 const getChainId = async (
   signer: ethers.Signer | null
 ): Promise<ChainId | null> => {
-  if (signer) {
+  if (signer && signer.provider) {
     const network = await signer.provider.getNetwork();
-    return Number(network.chainId) as ChainId;
+    const chainId = Number(network.chainId);
+    if (chainId === 11155111 || chainId === 84532 || chainId === 1) {
+      return chainId as ChainId;
+    }
   }
   return null;
 };
