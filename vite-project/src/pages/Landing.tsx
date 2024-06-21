@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import ERC20Assets from "../components/others/ERC20Assets";
 import NFTAssets from "../components/others/NFTAssets";
 import BundleService from "../services/BundleService"; 
+import AccountService from "../services/AccountService";
 
 const Landing = ({ walletAddress }) => {
   const [erc20Assets, setErc20Assets] = useState([]);
@@ -12,13 +13,14 @@ const Landing = ({ walletAddress }) => {
   const [loading, setLoading] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [message, setMessage] = useState("");
+  const [chainId, setChainId] = useState(null);
 
   const fetchAssets = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/get_assets", {
+      const response = await axios.get("https://apipwn.readymad3.com/get_assets", {
         params: {
           address: walletAddress,
-          blockchain: "sepolia",
+          blockchain: chainId === 11155111 ? "sepolia" : chainId === 84532 ? "base sepolia" : "eth", // Ajustar según el chainId
         },
       });
       const data = response.data;
@@ -33,9 +35,9 @@ const Landing = ({ walletAddress }) => {
   const manageAssets = async () => {
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:8000/manage_assets", {
+      const response = await axios.post("https://apipwn.readymad3.com/manage_assets", {
         address: walletAddress,
-        blockchains: ["sepolia"],
+        blockchains: [chainId === 11155111 ? "sepolia" : chainId === 84532 ? "base sepolia" : "eth"], 
       });
       const data = response.data;
       console.log("Manage Assets Response:", data);
@@ -50,9 +52,15 @@ const Landing = ({ walletAddress }) => {
   };
 
   useEffect(() => {
-    if (walletAddress) {
-      fetchAssets();
-    }
+    const fetchAccountData = async () => {
+      const { chainId } = await AccountService.getAccountData();
+      setChainId(chainId);
+      console.log("Chain ID:", chainId);
+      if (walletAddress) {
+        fetchAssets();
+      }
+    };
+    fetchAccountData();
   }, [walletAddress]);
 
   const truncateAddress = (address) => {
@@ -81,7 +89,7 @@ const Landing = ({ walletAddress }) => {
     setProcessing(true);
     setMessage("Bundling assets, please wait...");
     try {
-      const bundleId = await BundleService.bundletokens(selectedAssets);
+      const bundleId = await BundleService.bundletokens(selectedAssets,chainId);
       console.log("Assets bundled with ID:", bundleId);
     } catch (error) {
       console.error("Error bundling assets:", error);
@@ -98,7 +106,7 @@ const Landing = ({ walletAddress }) => {
     setProcessing(true);
     setMessage("Unbundling assets, please wait...");
     try {
-      const unbundleId = await BundleService.unbundle(selectedAssets);
+      const unbundleId = await BundleService.unbundle(selectedAssets,chainId);
       console.log("Assets unbundled with ID:", unbundleId);
       setTimeout(() => {
         setMessage("");
@@ -137,7 +145,7 @@ const Landing = ({ walletAddress }) => {
                 truncateAddress={truncateAddress}
                 onSelectAsset={handleSelectAsset}
                 selectedAssets={selectedAssets}
-                walletAddress={walletAddress}  
+                chainId={chainId}  
               />
               <div className="text-center text-2xl mt-4">NFT Assets</div>
               <NFTAssets
@@ -145,6 +153,7 @@ const Landing = ({ walletAddress }) => {
                 truncateAddress={truncateAddress}
                 onSelectAsset={handleSelectAsset}
                 selectedAssets={selectedAssets}
+                chainId={chainId} 
               />
             </>
           )}

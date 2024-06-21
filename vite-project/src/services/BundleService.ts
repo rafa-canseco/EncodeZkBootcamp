@@ -1,6 +1,6 @@
 import AccountService from "./AccountService";
 import { contracts, GAS_LIMIT, tokenInfos } from "../constants";
-import { getBundler, getToken } from "./ContractService";
+import { getBundler } from "./ContractService";
 import { ethers } from "ethers";
 
 let isConfirming = false;
@@ -8,13 +8,26 @@ const setisConfirming = (value: boolean) => {
     isConfirming = value;
 };
 
+const getBundleAddress = (chainId:number) => {
+    switch (chainId) {
+      case 11155111:
+        return contracts.BUNDLER.address.sepolia; 
+      case 84532:
+        return contracts.BUNDLER.address.baseSepolia; 
+      default:
+        return contracts.BUNDLER.address.ethereum;
+    }
+  };
+
 export default {
-    bundletokens: async (selectedAssets: any []) => {
+    bundletokens: async (selectedAssets: any [], chainId:any) => {
         setisConfirming(true);
         console.log("Selected Assets:", selectedAssets);
 
         const { signer } = await AccountService.getAccountData();
-        const bundler = await getBundler();
+        const bundlerAddress = getBundleAddress(chainId)
+        console.log(bundlerAddress)
+        const bundler = await getBundler(bundlerAddress);
 
         const assets = selectedAssets.map((asset) => {
             if (asset.type === 'ERC20') {
@@ -47,7 +60,8 @@ export default {
             throw error;
         }
     },
-    unbundle: async (selectedAssets: any[]) => {
+    unbundle: async (selectedAssets: any[],chainId:any) => {
+        const bundlerAddress = getBundleAddress(chainId)
         setisConfirming(true);
         const tokenId = selectedAssets.find((asset) => asset.type !== 'ERC20')?.token_id;
     console.log("Unbundling Token ID:", tokenId);
@@ -57,7 +71,7 @@ export default {
       }
 
         const { signer } = await AccountService.getAccountData();
-        const bundler = await getBundler();
+        const bundler = await getBundler(bundlerAddress);
 
         try {
             const tx = await bundler.connect(signer).unwrap(tokenId, { gasLimit: GAS_LIMIT }); 

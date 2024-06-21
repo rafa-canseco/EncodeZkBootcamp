@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { ClipLoader } from "react-spinners";
 import useTokenApproval from "../../hooks/useTokenApproval";
 
-const TokenApprovalButton = ({ symbol, spenderAddress }) => {
-  const { isApproved, isAskingPermission, isApproving, approve } = useTokenApproval(symbol, spenderAddress);
+const TokenApprovalButton = ({ symbol,  chainId }) => {
+  const { isApproved, isAskingPermission, isApproving, approve } = useTokenApproval(symbol, chainId);
   const [text, setText] = useState('Approve');
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import TokenApprovalButton from "./TokenApprovalButton";
 
-const ERC20Assets = ({ assets, truncateAddress, onSelectAsset, selectedAssets, walletAddress }) => (
+const ERC20Assets = ({ assets, truncateAddress, onSelectAsset, selectedAssets, chainId }) => (
   <div>
     <h2 className="mt-4">ERC20 Assets</h2>
     <div className="flex flex-wrap gap-4">
@@ -25,7 +25,7 @@ const ERC20Assets = ({ assets, truncateAddress, onSelectAsset, selectedAssets, w
               {asset.image_url && (
                 <img src={asset.image_url} alt={asset.name} width="50" />
               )}
-              <TokenApprovalButton symbol={asset.symbol} spenderAddress={walletAddress} />
+              <TokenApprovalButton symbol={asset.symbol}  chainId={chainId} />
             </CardContent>
           </Card>
         );

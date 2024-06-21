@@ -1,30 +1,39 @@
 import { useState, useEffect } from "react";
 import ApprovalService from "../services/ApprovalService";
+import { tokenInfos } from "../constants";
 
-const useTokenApproval = (symbol, spenderAddress) => {
+const useTokenApproval = (symbol: string, chainId: number) => {
   const [isApproved, setIsApproved] = useState(false);
   const [isAskingPermission, setIsAskingPermission] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
 
   useEffect(() => {
     const checkIsApproved = async () => {
-      const isApproved = await ApprovalService.isApprovedToken(symbol, spenderAddress);
-      setIsApproved(isApproved);
+      if (tokenInfos[symbol]) {
+        const isApproved = await ApprovalService.isApprovedToken(symbol, chainId);
+        setIsApproved(isApproved);
+      } else {
+        console.error(`Token symbol ${symbol} is not defined in tokenInfos`);
+      }
     };
 
     checkIsApproved();
-  }, [symbol, spenderAddress]);
+  }, [symbol, chainId]);
 
   const approve = async () => {
-    setIsAskingPermission(true);
-    await ApprovalService.approveTokens(
-      symbol,
-      spenderAddress,
-      setIsApproving,
-      setIsAskingPermission
-    );
-    const isApproved = await ApprovalService.isApprovedToken(symbol, spenderAddress);
-    setIsApproved(isApproved);
+    if (tokenInfos[symbol]) {
+      setIsAskingPermission(true);
+      await ApprovalService.approveTokens(
+        symbol,
+        setIsApproving,
+        setIsAskingPermission,
+        chainId
+      );
+      const isApproved = await ApprovalService.isApprovedToken(symbol, chainId);
+      setIsApproved(isApproved);
+    } else {
+      console.error(`Token symbol ${symbol} is not defined in tokenInfos`);
+    }
   };
 
   return {

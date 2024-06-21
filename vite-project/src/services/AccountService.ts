@@ -17,6 +17,14 @@ interface Window {
     return null;
   };
 
+  const getChainId = async (signer: ethers.Signer | null) => {
+    if (signer) {
+      const network = await signer.provider.getNetwork();
+      return Number(network.chainId);
+    }
+    return null;
+  };
+
 const getWalletAddress = async (signer: ethers.Signer | null) => {
     if (signer) {
       return await signer.getAddress();
@@ -24,21 +32,23 @@ const getWalletAddress = async (signer: ethers.Signer | null) => {
     return null;
   };
 
-export default {
-  getProvider: () => getProvider(),
-
-  connectWallet: async () => {
-    const provider = getProvider();
-    await provider.send("eth_requestAccounts", []);
-    const signer = await getSigner();
-    const walletAddress = await getWalletAddress(signer);
-    return { provider, signer, walletAddress };
-  },
-
-  getAccountData: async () => {
-    const provider = getProvider();
-    const signer = await getSigner();
-    const walletAddress = await getWalletAddress(signer);
-    return { provider, signer, walletAddress };
-  }
-};
+  export default {
+    getProvider: () => getProvider(),
+  
+    connectWallet: async () => {
+      const provider = getProvider();
+      await provider.send("eth_requestAccounts", []);
+      const signer = await getSigner();
+      const walletAddress = await getWalletAddress(signer);
+      const chainId = await getChainId(signer);
+      return { provider, signer, walletAddress, chainId };
+    },
+  
+    getAccountData: async () => {
+      const provider = getProvider();
+      const signer = await getSigner();
+      const walletAddress = await getWalletAddress(signer);
+      const chainId = await getChainId(signer);
+      return { provider, signer, walletAddress, chainId };
+    }
+  };

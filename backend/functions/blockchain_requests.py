@@ -63,3 +63,4 @@ def fetch_NFT_holdings_moralis(wallet, blockchain):
         })
 
     return nft_info
+
