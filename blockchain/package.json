@@ -9,7 +9,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.7.3",
+    "@openzeppelin/contracts": "^4.9.6",
     "@pwnfinance/multitoken": "^1.1.0",
     "hardhat": "^2.22.5",
     "openzeppelin-contracts": "^4.0.0"

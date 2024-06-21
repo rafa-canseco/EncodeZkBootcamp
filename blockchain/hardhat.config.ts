@@ -11,7 +11,7 @@ const config: HardhatUserConfig = {
         version: "0.8.16",
       },
       {
-        version: "0.8.20",
+        version: "0.8.0",
       },
     ],
     settings: {
@@ -19,6 +19,24 @@ const config: HardhatUserConfig = {
         enabled: true,
         runs: 200,
       },
+      metadata: {
+        useLiteralContent: false,
+        bytecodeHash: "ipfs",
+      },
+      outputSelection: {
+        "*": {
+          "*": [
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "devdoc",
+            "userdoc",
+            "metadata",
+            "abi",
+          ],
+        },
+      },
+      evmVersion: "london",
+      libraries: {},
     },
   },
   etherscan: {
@@ -34,7 +52,7 @@ const config: HardhatUserConfig = {
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
-  },
+  }
 };
 
 export default config;

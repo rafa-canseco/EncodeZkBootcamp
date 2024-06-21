@@ -51,7 +51,7 @@ export const contracts = {
     BUNDLER: {
         address: {
             sepolia:"0x448E3D0a4BAa00FE511a03E7B27177AeDE6d9636",
-            baseSepolia: "0xa8830BF7469Ba944e6baCcAE6637eE95266926e5",
+            baseSepolia: "0xD8bb0daC79c89C4B71fA2bb0930b5b005d071169",
             ethereum: "0x19e3293196aee99BB3080f28B9D3b4ea7F232b8d"
     },
     WRAPPEDETHER: {
