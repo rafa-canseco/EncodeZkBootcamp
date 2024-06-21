@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ClipLoader } from "react-spinners";
 import useNftApproval from "../../hooks/useNftApproval";
+import { NftApprovalButtonProps } from "../../types/index";
 
-const NftApprovalButton = ({ tokenId ,chainId}) => {
-  const { isApproved, isAskingPermission, isApproving, approve } = useNftApproval( tokenId,chainId);
+const NftApprovalButton: React.FC<NftApprovalButtonProps> = ({ tokenId, chainId }) => {
+  const { isApproved, isAskingPermission, isApproving, approve } = useNftApproval(tokenId, chainId);
   const [text, setText] = useState('Approve');
 
   useEffect(() => {
@@ -23,7 +24,7 @@ const NftApprovalButton = ({ tokenId ,chainId}) => {
     <Button onClick={approve} disabled={isApproved || isAskingPermission || isApproving}>
       {(isAskingPermission || isApproving) && (
         <>
-          <ClipLoader color='#babfcf' loading={true} size={18} speedMultiplier="0.75" />
+          <ClipLoader color='#babfcf' loading={true} size={18} speedMultiplier={0.75} />
           &nbsp;&nbsp;
         </>
       )}

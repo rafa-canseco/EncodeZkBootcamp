@@ -1,87 +1,67 @@
 import AccountService from "./AccountService";
-import { contracts, GAS_LIMIT, tokenInfos } from "../constants";
+import { GAS_LIMIT, getBundleAddress } from "../constants";
 import { getBundler } from "./ContractService";
 import { ethers } from "ethers";
 
-let isConfirming = false;
-const setisConfirming = (value: boolean) => {
-    isConfirming = value;
+interface Asset {
+  type: 'ERC20' | 'NFT';
+  token_address?: string;
+  address?: string;
+  token_id?: string;
+  id?: string;
+  quantity?: string;
+}
+
+const executeTransaction = async (
+  transactionFunction: () => Promise<ethers.ContractTransaction>,
+  errorMessage: string
+) => {
+  try {
+    const tx = await transactionFunction();
+    const receipt = await tx.wait();
+    return receipt.transactionHash;
+  } catch (error) {
+    console.error(errorMessage, error);
+    throw error;
+  }
 };
 
-const getBundleAddress = (chainId:number) => {
-    switch (chainId) {
-      case 11155111:
-        return contracts.BUNDLER.address.sepolia; 
-      case 84532:
-        return contracts.BUNDLER.address.baseSepolia; 
-      default:
-        return contracts.BUNDLER.address.ethereum;
-    }
-  };
-
 export default {
-    bundletokens: async (selectedAssets: any [], chainId:any) => {
-        setisConfirming(true);
-        console.log("Selected Assets:", selectedAssets);
+  bundletokens: async (selectedAssets: Asset[], chainId: number) => {
+    console.log("Selected Assets:", selectedAssets);
 
-        const { signer } = await AccountService.getAccountData();
-        const bundlerAddress = getBundleAddress(chainId)
-        console.log(bundlerAddress)
-        const bundler = await getBundler(bundlerAddress);
+    const { signer } = await AccountService.getAccountData();
+    const bundlerAddress = getBundleAddress(chainId);
+    console.log("Bundler Address:", bundlerAddress);
+    const bundler = await getBundler(bundlerAddress);
 
-        const assets = selectedAssets.map((asset) => {
-            if (asset.type === 'ERC20') {
-                return {
-                    category: 0,
-                    assetAddress: asset.token_address || asset.address,
-                    id: 0,
-                    amount: ethers.parseUnits(asset.quantity.toString(), 18),
-                };
-            } else {
-                return {
-                    category: 1,
-                    assetAddress: asset.token_address || asset.address,
-                    id: asset.token_id || asset.id,
-                    amount: 1,
-                };
-            }
-        });
-        console.log("Mapped Assets:", assets);;
+    const assets = selectedAssets.map((asset) => ({
+      category: asset.type === 'ERC20' ? 0 : 1,
+      assetAddress: asset.token_address || asset.address,
+      id: asset.type === 'ERC20' ? 0 : (asset.token_id || asset.id),
+      amount: asset.type === 'ERC20' ? ethers.parseUnits((asset.quantity || '0').toString(), 18) : BigInt(1),
+    }));
+    console.log("Mapped Assets:", assets);
 
+    return executeTransaction(
+      () => bundler.connect(signer).create(assets, { gasLimit: GAS_LIMIT }),
+      "Error bundling assets:"
+    );
+  },
 
-        try {
-            const tx = await bundler.connect(signer).create(assets, { gasLimit: GAS_LIMIT }); 
-            const receipt = await tx.wait();
-            setisConfirming(false);
-            return receipt.transactionHash;
-        } catch (error) {
-            setisConfirming(false);
-            console.error("Error bundling assets:", error);
-            throw error;
-        }
-    },
-    unbundle: async (selectedAssets: any[],chainId:any) => {
-        const bundlerAddress = getBundleAddress(chainId)
-        setisConfirming(true);
-        const tokenId = selectedAssets.find((asset) => asset.type !== 'ERC20')?.token_id;
+  unbundle: async (selectedAssets: Asset[], chainId: number) => {
+    const tokenId = selectedAssets.find((asset) => asset.type !== 'ERC20')?.token_id;
     console.log("Unbundling Token ID:", tokenId);
     if (!tokenId) {
-        setisConfirming(false);
-        throw new Error("No NFT selected for unbundling.");
-      }
-
-        const { signer } = await AccountService.getAccountData();
-        const bundler = await getBundler(bundlerAddress);
-
-        try {
-            const tx = await bundler.connect(signer).unwrap(tokenId, { gasLimit: GAS_LIMIT }); 
-            const receipt = await tx.wait();
-            setisConfirming(false);
-            return receipt.transactionHash;
-        } catch (error) {
-            setisConfirming(false);
-            console.error("Error unbundling asset:", error);
-            throw error;
-        }
+      throw new Error("No NFT selected for unbundling.");
     }
+
+    const { signer } = await AccountService.getAccountData();
+    const bundler = await getBundler(getBundleAddress(chainId));
+
+    return executeTransaction(
+      () => bundler.connect(signer).unwrap(tokenId, { gasLimit: GAS_LIMIT }),
+      "Error unbundling asset:"
+    );
+  }
 };

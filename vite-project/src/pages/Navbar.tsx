@@ -1,8 +1,6 @@
+import React from "react";
 import ConnectButton from "../components/others/ConnectButton";
-
-interface NavbarProps {
-    onWalletConnected: (address: string) => void;
-  }
+import { NavbarProps } from "../types/index";
 
 const Navbar: React.FC<NavbarProps> = ({ onWalletConnected }) => {
   return (

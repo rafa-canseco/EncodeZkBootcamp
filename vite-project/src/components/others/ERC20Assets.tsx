@@ -1,16 +1,34 @@
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import React from "react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
 import TokenApprovalButton from "./TokenApprovalButton";
+import { ERC20AssetsProps } from "../../types/index";
 
-const ERC20Assets = ({ assets, truncateAddress, onSelectAsset, selectedAssets, chainId }) => (
+const ERC20Assets: React.FC<ERC20AssetsProps> = ({
+  assets,
+  truncateAddress,
+  onSelectAsset,
+  selectedAssets,
+  chainId,
+}) => (
   <div>
     <h2 className="mt-4">ERC20 Assets</h2>
     <div className="flex flex-wrap gap-4">
       {assets.map((asset, index) => {
-        const isSelected = selectedAssets.some((a) => a.token_address === asset.token_address && a.type === 'ERC20');
+        const isSelected = selectedAssets.some(
+          (a) => a.token_address === asset.token_address && a.type === "ERC20"
+        );
         return (
           <Card
             key={index}
-            className={`w-[350px] hover:shadow-2xl hover:scale-105 transition-shadow duration-300 ${isSelected ? 'border-2 border-green-500 bg-green-100' : ''}`}
+            className={`w-[350px] hover:shadow-2xl hover:scale-105 transition-shadow duration-300 ${
+              isSelected ? "border-2 border-green-500 bg-green-100" : ""
+            }`}
             onClick={() => onSelectAsset(asset)}
           >
             <CardHeader>
@@ -18,14 +36,16 @@ const ERC20Assets = ({ assets, truncateAddress, onSelectAsset, selectedAssets, c
               <CardDescription>Symbol: {asset.symbol}</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>Address: {truncateAddress(asset.token_address)}</p>
+              <p>Address: {truncateAddress(asset.token_address || "")}</p>
               <p>Blockchain: {asset.blockchain}</p>
               <p>Quantity: {asset.quantity}</p>
               <p>Price: {asset.asset_price}</p>
               {asset.image_url && (
                 <img src={asset.image_url} alt={asset.name} width="50" />
               )}
-              <TokenApprovalButton symbol={asset.symbol}  chainId={chainId} />
+              {asset.approvedSymbol && (
+                <TokenApprovalButton symbol={asset.approvedSymbol} chainId={chainId} />
+              )}
             </CardContent>
           </Card>
         );

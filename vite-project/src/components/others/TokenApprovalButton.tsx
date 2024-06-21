@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ClipLoader } from "react-spinners";
 import useTokenApproval from "../../hooks/useTokenApproval";
+import { TokenSymbol, ChainId } from "@/types";
 
-const TokenApprovalButton = ({ symbol,  chainId }) => {
+const TokenApprovalButton: React.FC<{symbol: TokenSymbol; chainId: ChainId}> = ({ symbol, chainId }) => {
   const { isApproved, isAskingPermission, isApproving, approve } = useTokenApproval(symbol, chainId);
   const [text, setText] = useState('Approve');
 
@@ -23,7 +24,7 @@ const TokenApprovalButton = ({ symbol,  chainId }) => {
     <Button onClick={approve} disabled={isApproved || isAskingPermission || isApproving}>
       {(isAskingPermission || isApproving) && (
         <>
-          <ClipLoader color='#babfcf' loading={true} size={18} speedMultiplier="0.75" />
+          <ClipLoader color='#babfcf' loading={true} size={18} speedMultiplier={0.75} />
           &nbsp;&nbsp;
         </>
       )}

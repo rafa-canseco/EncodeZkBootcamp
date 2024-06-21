@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import ApprovalService from "../services/ApprovalService";
+import { ChainId } from "../types/index";
 
-const useNftApproval = (tokenId:number,chainId:number) => {
+const useNftApproval = (tokenId: string, chainId: ChainId) => {
   const [isApproved, setIsApproved] = useState(false);
   const [isAskingPermission, setIsAskingPermission] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
@@ -13,7 +14,7 @@ const useNftApproval = (tokenId:number,chainId:number) => {
     };
 
     checkIsApproved();
-  }, []);
+  }, [chainId]);
 
   const approve = async () => {
     setIsAskingPermission(true);

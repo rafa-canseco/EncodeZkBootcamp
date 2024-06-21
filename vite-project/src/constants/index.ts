@@ -67,3 +67,14 @@ export const contracts = {
 }
 
 export const GAS_LIMIT = ethers.toBeHex(1000000);
+
+export const getBundleAddress = (chainId: number): string => {
+    switch (chainId) {
+      case 11155111:
+        return contracts.BUNDLER.address.sepolia;
+      case 84532:
+        return contracts.BUNDLER.address.baseSepolia;
+      default:
+        return contracts.BUNDLER.address.ethereum;
+    }
+  };
