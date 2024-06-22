@@ -1,30 +1,56 @@
-# React + TypeScript + Vite
+# Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This frontend is developed with React and structured with the following folders:
 
-Currently, two official plugins are available:
+## Project Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### `abi`
+Contains the ABIs for ERC20, ERC721, and the TokenBundler contract.
 
-## Expanding the ESLint configuration
+### `components`
+- `ui`: Pre-built components using Shadcn.
+- Other components: Used for landing pages, buttons, and approval components.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### `constants`
+Stores project-wide constants.
 
-- Configure the top-level `parserOptions` property like this:
+### `hooks`
+Houses custom React hooks.
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+### `pages`
+Contains the main application pages.
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### `services`
+Includes:
+- Web3 wallet (Metamask) integration
+- Contract interactions
+- Approval processes
+
+### `types`
+Defines TypeScript types and interfaces.
+
+### `utils`
+Contains utility functions and helper methods.
+
+## Features
+
+- Metamask wallet connection
+- Display of owned assets with balances
+- Asset bundling functionality
+- Asset refresh and invalidation
+- Real-time balance updates after wrapping
+- Contract interactions for bundling and unbundling
+
+## Supported Networks
+
+- Base Sepolia and Sepolia: Full contract interactions
+- Ethereum Mainnet: Asset display only
+
+## Future Enhancements
+
+- Multi-network support
+- Asset price display
+- Asset unbundling feature
+
+## Notice
+This frontend currently allows interactions only with specific ERC20 and ERC721 tokens. On Sepolia, it supports PWN and DAI (ERC20), as well as PWN (ERC721). On Base Sepolia, it supports only PWN (ERC20) and PWN (ERC721). ETH wrapping and related interactions are not yet implemented.
