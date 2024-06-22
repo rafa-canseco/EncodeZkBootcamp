@@ -85,6 +85,7 @@ export const useAssets = (walletAddress: string | null): UseAssetsReturn => {
     setProcessing(true);
     setMessage("");
     try {
+      await BundleService.bundletokens(selectedAssets, chainId!, erc20Quantities);
       setMessage(`Bundle created successfully. wait a second`);
       setTimeout(() => {
         setMessage("");
