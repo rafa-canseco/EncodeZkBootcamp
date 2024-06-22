@@ -2,15 +2,9 @@ import AccountService from "./AccountService";
 import { GAS_LIMIT, getBundleAddress } from "../constants";
 import { getBundler } from "./ContractService";
 import { ethers } from "ethers";
+import { Asset } from "../types/index";
 
-interface Asset {
-  type: 'ERC20' | 'NFT';
-  token_address?: string;
-  address?: string;
-  token_id?: string;
-  id?: string;
-  quantity?: string;
-}
+
 
 const executeTransaction = async (
   transactionFunction: () => Promise<ethers.ContractTransaction>,
@@ -27,8 +21,9 @@ const executeTransaction = async (
 };
 
 export default {
-  bundletokens: async (selectedAssets: Asset[], chainId: number) => {
+  bundletokens: async (selectedAssets: Asset[], chainId: number, erc20Quantities: {[address: string]: string}) => {
     console.log("Selected Assets:", selectedAssets);
+    console.log("ERC20 Quantities:", erc20Quantities);
 
     const { signer } = await AccountService.getAccountData();
     const bundlerAddress = getBundleAddress(chainId);
@@ -39,7 +34,9 @@ export default {
       category: asset.type === 'ERC20' ? 0 : 1,
       assetAddress: asset.token_address || asset.address,
       id: asset.type === 'ERC20' ? 0 : (asset.token_id || asset.id),
-      amount: asset.type === 'ERC20' ? ethers.parseUnits((asset.quantity || '0').toString(), 18) : BigInt(1),
+      amount: asset.type === 'ERC20' 
+        ? ethers.parseUnits(erc20Quantities[asset.token_address || ''] || asset.quantity || '0', 18)
+        : BigInt(1),
     }));
     console.log("Mapped Assets:", assets);
 

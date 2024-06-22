@@ -51,13 +51,15 @@ export interface NavbarProps {
     image_url?: string;
   }
 
-  export interface ERC20AssetsProps {
-    assets: ERC20AssetExtended[];
-    truncateAddress: (address: string) => string;
-    onSelectAsset: (asset: ERC20AssetExtended) => void;
-    selectedAssets: any[];
-    chainId: ChainId;
-  }
+export interface ERC20AssetsProps {
+  assets: ERC20AssetExtended[];
+  truncateAddress: (address: string) => string;
+  onSelectAsset: (asset: ERC20AssetExtended) => void;
+  selectedAssets: any[];
+  chainId: ChainId;
+  quantities: { [address: string]: string };
+  onQuantityChange: (address: string, quantity: string) => void;
+}
 
   export interface NFTAsset extends Asset {
     name: string;
@@ -94,4 +96,21 @@ export interface TokenApprovalButtonProps {
 
   export interface TokenInfos {
     [key: string]: TokenInfo;
+  }
+
+  export interface UseAssetsReturn {
+    erc20Assets: ERC20AssetExtended[];
+    nftAssets: NFTAsset[];
+    selectedAssets: Asset[];
+    setSelectedAssets: React.Dispatch<React.SetStateAction<Asset[]>>;
+    loading: boolean;
+    processing: boolean;
+    message: string;
+    chainId: ChainId | null;
+    manageAssets: () => Promise<void>;
+    handleBundle: () => Promise<void>;
+    handleUnbundle: () => Promise<void>;
+    handleQuantityChange : any
+    erc20Quantities:any
+    fetchAssets:any
   }

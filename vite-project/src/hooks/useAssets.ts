@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import AccountService from "../services/AccountService";
 import BundleService from "../services/BundleService";
-import { Asset, ERC20Asset, NFTAsset } from "../types/index";
+import { Asset, ERC20Asset, NFTAsset,UseAssetsReturn } from "../types/index";
 
-export const useAssets = (walletAddress: string | null) => {
+export const useAssets = (walletAddress: string | null): UseAssetsReturn => {
   const [erc20Assets, setErc20Assets] = useState<ERC20Asset[]>([]);
   const [nftAssets, setNftAssets] = useState<NFTAsset[]>([]);
   const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
@@ -12,6 +12,7 @@ export const useAssets = (walletAddress: string | null) => {
   const [processing, setProcessing] = useState(false);
   const [message, setMessage] = useState("");
   const [chainId, setChainId] = useState<any>(null);
+  const [erc20Quantities, setErc20Quantities] = useState<{[address: string]: string}>({});
 
   useEffect(() => {
     const fetchAccountData = async () => {
@@ -23,6 +24,10 @@ export const useAssets = (walletAddress: string | null) => {
     };
     fetchAccountData();
   }, [walletAddress]);
+
+  const handleQuantityChange = (address: string, quantity: string) => {
+    setErc20Quantities(prev => ({...prev, [address]: quantity}));
+  };
 
   const fetchAssets = async () => {
     try {
@@ -76,21 +81,21 @@ export const useAssets = (walletAddress: string | null) => {
   };
 
   const handleBundle = async () => {
+    if (selectedAssets.length === 0) return;
     setProcessing(true);
-    setMessage("Bundling assets, please wait...");
+    setMessage("");
     try {
-      if (chainId === null) {
-        throw new Error("ChainId no disponible");
-      }
-      await BundleService.bundletokens(selectedAssets, chainId);
-    } catch (error) {
-      console.error("Error al agrupar activos:", error);
-    } finally {
-      setProcessing(false);
+      const result = await BundleService.bundletokens(selectedAssets, chainId!, erc20Quantities);
+      setMessage(`Bundle created successfully. Transaction hash: ${result}`);
       setTimeout(() => {
         setMessage("");
         manageAssets();
       }, 10000);
+    } catch (error) {
+      console.error("Error al agrupar activos:", error);
+      setMessage("Error al crear el bundle. Por favor, inténtalo de nuevo.");
+    } finally {
+      setProcessing(false);
     }
   };
 
@@ -126,5 +131,7 @@ export const useAssets = (walletAddress: string | null) => {
     manageAssets,
     handleBundle,
     handleUnbundle,
+    erc20Quantities,
+    handleQuantityChange,
   };
 };
