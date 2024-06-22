@@ -50,12 +50,7 @@ export interface NavbarProps {
     asset_price: string;
     image_url?: string;
   }
-  export type ApprovedTokenSymbol = "DAI" | "PWN" | "WETH" | "NFT";
 
-  export interface ERC20AssetExtended extends ERC20Asset {
-    approvedSymbol?: ApprovedTokenSymbol;
-  }
-  
   export interface ERC20AssetsProps {
     assets: ERC20AssetExtended[];
     truncateAddress: (address: string) => string;
@@ -85,6 +80,18 @@ export interface NavbarProps {
     chainId: ChainId;
   }
 
-  export interface TokenInfoMap {
+
+export interface TokenApprovalButtonProps {
+    symbol: TokenSymbol;
+    chainId: ChainId;
+  }
+  
+  export type ApprovedTokenSymbol = TokenSymbol;
+
+  export interface ERC20AssetExtended extends ERC20Asset {
+    approvedSymbol?: ApprovedTokenSymbol;
+  }
+
+  export interface TokenInfos {
     [key: string]: TokenInfo;
   }

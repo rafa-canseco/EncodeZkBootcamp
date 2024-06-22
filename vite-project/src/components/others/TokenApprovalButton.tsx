@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ClipLoader } from "react-spinners";
 import useTokenApproval from "../../hooks/useTokenApproval";
-import { TokenSymbol, ChainId } from "@/types";
+import { TokenApprovalButtonProps } from "../../types/index";
 
-const TokenApprovalButton: React.FC<{symbol: TokenSymbol; chainId: ChainId}> = ({ symbol, chainId }) => {
+const TokenApprovalButton: React.FC<TokenApprovalButtonProps> = ({ symbol, chainId }) => {
   const { isApproved, isAskingPermission, isApproving, approve } = useTokenApproval(symbol, chainId);
   const [text, setText] = useState('Approve');
 

@@ -7,7 +7,7 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import TokenApprovalButton from "./TokenApprovalButton";
-import { ERC20AssetsProps } from "../../types/index";
+import { ERC20AssetsProps, TokenSymbol } from "../../types/index";
 
 const ERC20Assets: React.FC<ERC20AssetsProps> = ({
   assets,
@@ -43,9 +43,7 @@ const ERC20Assets: React.FC<ERC20AssetsProps> = ({
               {asset.image_url && (
                 <img src={asset.image_url} alt={asset.name} width="50" />
               )}
-              {asset.approvedSymbol && (
-                <TokenApprovalButton symbol={asset.approvedSymbol} chainId={chainId} />
-              )}
+              <TokenApprovalButton symbol={asset.symbol as TokenSymbol} chainId={chainId} />
             </CardContent>
           </Card>
         );
