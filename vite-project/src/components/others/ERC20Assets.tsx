@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import TokenApprovalButton from "./TokenApprovalButton";
 import { ERC20AssetsProps, TokenSymbol, ERC20AssetExtended } from "../../types/index";
+import { Input}  from "@/components/ui/input"
 
   const ERC20Assets: React.FC<ERC20AssetsProps> = ({
     assets,
@@ -41,7 +42,7 @@ import { ERC20AssetsProps, TokenSymbol, ERC20AssetExtended } from "../../types/i
               <p>Address: {truncateAddress(asset.token_address || "")}</p>
               <p>Blockchain: {asset.blockchain}</p>
               <p>Quantity: {asset.quantity}</p>
-              <input
+              <Input
                 type="number"
                 value={quantities[asset.token_address || ''] || ''}
                 onChange={(e) => onQuantityChange(asset.token_address || '', e.target.value)}

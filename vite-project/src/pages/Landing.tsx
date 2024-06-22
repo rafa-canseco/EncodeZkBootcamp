@@ -6,6 +6,7 @@ import ERC20Assets from "../components/others/ERC20Assets";
 import NFTAssets from "../components/others/NFTAssets";
 import { LandingProps,  UseAssetsReturn } from "../types/index";
 
+
 const Landing: React.FC<LandingProps> = ({ walletAddress }) => {
   const {
     erc20Assets,
