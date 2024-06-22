@@ -4,8 +4,7 @@ import { getBundler } from "./ContractService";
 import { ethers } from "ethers";
 import { Asset } from "../types/index";
 
-
-
+// Helper function to execute a transaction and handle errors
 const executeTransaction = async (
   transactionFunction: () => Promise<ethers.ContractTransaction>,
   errorMessage: string
@@ -30,6 +29,7 @@ export default {
     console.log("Bundler Address:", bundlerAddress);
     const bundler = await getBundler(bundlerAddress);
 
+    // Map selected assets to the format expected by the bundler contract
     const assets = selectedAssets.map((asset) => ({
       category: asset.type === 'ERC20' ? 0 : 1,
       assetAddress: asset.token_address || asset.address,

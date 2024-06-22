@@ -29,6 +29,7 @@ export const useAssets = (walletAddress: string | null): UseAssetsReturn => {
     setErc20Quantities(prev => ({...prev, [address]: quantity}));
   };
 
+  // Fetch assets from the API
   const fetchAssets = async () => {
     try {
       const response = await axios.get(
@@ -53,6 +54,7 @@ export const useAssets = (walletAddress: string | null): UseAssetsReturn => {
     }
   };
 
+  // Manage assets by making a POST request to the API
   const manageAssets = async () => {
     setLoading(true);
     try {
@@ -80,6 +82,7 @@ export const useAssets = (walletAddress: string | null): UseAssetsReturn => {
     }
   };
 
+  // Handle the bundling of assets
   const handleBundle = async () => {
     if (selectedAssets.length === 0) return;
     setProcessing(true);
@@ -92,19 +95,20 @@ export const useAssets = (walletAddress: string | null): UseAssetsReturn => {
         manageAssets();
       }, 10000);
     } catch (error) {
-      console.error("Error al agrupar activos:", error);
-      setMessage("Error al crear el bundle. Por favor, inténtalo de nuevo.");
+      console.error("Error bundling assets:", error);
+      setMessage("Error creating the bundle. Please try again.");
     } finally {
       setProcessing(false);
     }
   };
 
+  // Handle the unbundling of assets
   const handleUnbundle = async () => {
     setProcessing(true);
     setMessage("Unbundling assets, please wait...");
     try {
       if (chainId === null) {
-        throw new Error("ChainId no está disponible");
+        throw new Error("ChainId is not available");
       }
       await BundleService.unbundle(selectedAssets, chainId);
       setTimeout(() => {

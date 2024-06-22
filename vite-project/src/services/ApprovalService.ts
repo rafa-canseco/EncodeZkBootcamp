@@ -3,6 +3,7 @@ import AccountService from "./AccountService";
 import { getToken, getNft } from "./ContractService";
 import { ChainId, TokenSymbol } from "../types/index";
 
+// Helper function to get token address based on token symbol and chain ID
 const getTokenAddress = (tokenSymbol: TokenSymbol, chainId: ChainId): string => {
   const tokenInfo = (tokenInfos as any)[tokenSymbol];
   if (!tokenInfo) {
@@ -21,6 +22,7 @@ const getTokenAddress = (tokenSymbol: TokenSymbol, chainId: ChainId): string => 
   return tokenInfo.address as string;
 };
 
+// Helper function to get NFT address based on chain ID
 const getNftAddress = (chainId: ChainId): string => {
   switch (chainId) {
     case 11155111:
@@ -33,6 +35,7 @@ const getNftAddress = (chainId: ChainId): string => {
 };
 
 export default {
+  // Check if a token is approved
   isApprovedToken: async (tokenSymbol: TokenSymbol, chainId: ChainId) => {
     const tokenAddress = getTokenAddress(tokenSymbol, chainId);
     const contract = getToken(tokenAddress);
@@ -42,6 +45,8 @@ export default {
     const maxAllowance = (tokenInfos as any)[tokenSymbol].maxAllowance;
     return allowance.toString() - maxAllowance === 0;
   },
+
+  // Approve tokens for bundling
   approveTokens: async (
     tokenSymbol: TokenSymbol,
     setIsApproving: (value: boolean) => void,
@@ -72,6 +77,8 @@ export default {
       console.error("approveTokens error:", error);
     }
   },
+
+  // Check if an NFT is approved
   isApprovedNft: async (chainId: ChainId) => {
     const nftAddress = getNftAddress(chainId);
     const contract = getNft(nftAddress);
@@ -84,6 +91,8 @@ export default {
     );
     return isApproved;
   },
+
+  // Approve NFT for bundling
   approveNft: async (
     tokenId: string | number,
     setIsApproving: (value: boolean) => void,

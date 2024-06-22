@@ -19,6 +19,7 @@ const NFTAssets: React.FC<NFTAssetsProps> = ({
     <h2 className="mt-4">NFT Assets</h2>
     <div className="flex flex-wrap gap-4">
       {assets.map((asset, index) => {
+        // Check if the current asset is selected
         const isSelected = selectedAssets.some(
           (a) =>
             a.token_address === asset.token_address &&
@@ -46,6 +47,7 @@ const NFTAssets: React.FC<NFTAssetsProps> = ({
               </p>
               <p>Blockchain: {asset.blockchain}</p>
               <p>Quantity: {asset.quantity}</p>
+              {/* Display asset image if available */}
               {asset.image_url && (
                 <img src={asset.image_url} alt={asset.name} width="50" />
               )}

@@ -3,6 +3,7 @@ import { ERC20ABI, BundlerArtifact, ERC721ABI } from "../constants";
 import AccountService from "./AccountService";
 import { ContractABI } from "../types/index";
 
+// Creates and returns a new ethers Contract instance for the Bundler
 export const getBundler = (bundlerAddress: string): ethers.Contract => {
   return new ethers.Contract(
     bundlerAddress,
@@ -11,6 +12,7 @@ export const getBundler = (bundlerAddress: string): ethers.Contract => {
   );
 };
 
+// Creates and returns a new ethers Contract instance for an ERC20 token
 export const getToken = (address: string): ethers.Contract => {
   return new ethers.Contract(
     address,
@@ -19,6 +21,7 @@ export const getToken = (address: string): ethers.Contract => {
   );
 };
 
+// Creates and returns a new ethers Contract instance for an ERC721 NFT
 export const getNft = (nftAddress: string): ethers.Contract => {
   return new ethers.Contract(
     nftAddress,

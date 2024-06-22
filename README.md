@@ -25,3 +25,9 @@ The frontend is deployed at:
 The backend is deployed at:
 
 [apipwn.readymad3.com/docs](https://apipwn.readymad3.com/docs)
+
+## Application Functionality
+
+For a detailed explanation of the application's functionality, please watch the following video:
+
+[Application Demo and Explanation](https://www.youtube.com/watch?v=Zms6snQx8IU)

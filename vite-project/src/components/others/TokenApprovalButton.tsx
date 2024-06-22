@@ -8,6 +8,7 @@ const TokenApprovalButton: React.FC<TokenApprovalButtonProps> = ({ symbol, chain
   const { isApproved, isAskingPermission, isApproving, approve } = useTokenApproval(symbol, chainId);
   const [text, setText] = useState('Approve');
 
+  // Update button text based on approval state
   useEffect(() => {
     if (isApproved) {
       setText('Approved');
@@ -22,6 +23,7 @@ const TokenApprovalButton: React.FC<TokenApprovalButtonProps> = ({ symbol, chain
 
   return (
     <Button onClick={approve} disabled={isApproved || isAskingPermission || isApproving}>
+      {/* Show loading spinner when asking permission or approving */}
       {(isAskingPermission || isApproving) && (
         <>
           <ClipLoader color='#babfcf' loading={true} size={18} speedMultiplier={0.75} />

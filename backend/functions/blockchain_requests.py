@@ -11,6 +11,9 @@ SIMPLEHASH = os.getenv("SIMPLEHASH_KEY")
 MORALIS = os.getenv("MORALIS_KEY")
 
 def fetch_erc20_holdings_moralis(wallet, blockchain):
+    """
+    Fetch ERC20 token holdings for a given wallet and blockchain using Moralis API.
+    """
     params = {
         "chain": blockchain,
         "address": wallet
@@ -35,6 +38,9 @@ def fetch_erc20_holdings_moralis(wallet, blockchain):
     return assets_info
 
 def fetch_NFT_holdings_moralis(wallet, blockchain):
+    """
+    Fetch NFT holdings for a given wallet and blockchain using Moralis API.
+    """
     params = {
         "chain": blockchain,
         "format": "decimal",
@@ -47,7 +53,6 @@ def fetch_NFT_holdings_moralis(wallet, blockchain):
         params=params
     )
     
-
     nft_info = []
     for nft in result.get("result", []):
         metadata = nft.get("metadata")

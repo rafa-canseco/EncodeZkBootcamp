@@ -3,12 +3,14 @@ import ApprovalService from "../services/ApprovalService";
 import { tokenInfos } from "../constants";
 import { ChainId, TokenSymbol } from "../types/index";
 
+// Custom hook to manage token approval state and actions
 const useTokenApproval = (symbol: TokenSymbol, chainId: ChainId) => {
   const [isApproved, setIsApproved] = useState(false);
   const [isAskingPermission, setIsAskingPermission] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
 
   useEffect(() => {
+    // Check if the token is approved when symbol or chainId changes
     const checkIsApproved = async () => {
       if (tokenInfos[symbol]) {
         const isApproved = await ApprovalService.isApprovedToken(
@@ -24,6 +26,7 @@ const useTokenApproval = (symbol: TokenSymbol, chainId: ChainId) => {
     checkIsApproved();
   }, [symbol, chainId]);
 
+  // Function to approve the token
   const approve = async () => {
     if (tokenInfos[symbol]) {
       setIsAskingPermission(true);
