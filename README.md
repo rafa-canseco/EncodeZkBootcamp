@@ -1,5 +1,12 @@
 # PWN Test Assignment
 
+## Application Functionality
+
+For a detailed explanation of the application's functionality, please watch the following video:
+
+[Application Demo and Explanation](https://www.youtube.com/watch?v=Zms6snQx8IU)
+
+
 This repository contains a full-stack application developed as part of a test assignment by PwnDao. The project is structured into three main folders:
 
 ## Project Structure
@@ -26,8 +33,3 @@ The backend is deployed at:
 
 [apipwn.readymad3.com/docs](https://apipwn.readymad3.com/docs)
 
-## Application Functionality
-
-For a detailed explanation of the application's functionality, please watch the following video:
-
-[Application Demo and Explanation](https://www.youtube.com/watch?v=Zms6snQx8IU)
