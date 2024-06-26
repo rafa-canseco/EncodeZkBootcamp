@@ -12,7 +12,8 @@ const executeTransaction = async (
   try {
     const tx = await transactionFunction();
     const receipt = await (tx as any).wait();
-    return receipt.transactionHash;
+    console.log(receipt.hash)
+    return receipt.hash;
   } catch (error) {
     console.error(errorMessage, error);
     throw error;
@@ -40,10 +41,11 @@ export default {
     }));
     console.log("Mapped Assets:", assets);
 
-    return executeTransaction(
+    const result = await executeTransaction(
       () => (bundler as any).connect(signer).create(assets, { gasLimit: GAS_LIMIT }),
       "Error bundling assets:"
     );
+    return result
   },
 
   unbundle: async (selectedAssets: Asset[], chainId: number) => {

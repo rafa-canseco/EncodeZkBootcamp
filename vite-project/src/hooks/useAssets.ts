@@ -84,19 +84,21 @@ export const useAssets = (walletAddress: string | null): UseAssetsReturn => {
 
   // Handle the bundling of assets
   const handleBundle = async () => {
-    if (selectedAssets.length === 0) return;
+    if (selectedAssets.length === 0) return null;
     setProcessing(true);
     setMessage("");
     try {
-      await BundleService.bundletokens(selectedAssets, chainId!, erc20Quantities);
+      const result = await BundleService.bundletokens(selectedAssets, chainId!, erc20Quantities);
       setMessage(`Bundle created successfully. wait a second`);
       setTimeout(() => {
         setMessage("");
         manageAssets();
       }, 10000);
+      return result;
     } catch (error) {
       console.error("Error bundling assets:", error);
       setMessage("Error creating the bundle. Please try again.");
+      return null;
     } finally {
       setProcessing(false);
     }

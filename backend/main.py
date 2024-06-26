@@ -1,11 +1,14 @@
-from fastapi import FastAPI,HTTPException
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from supabase import create_client
 from dotenv import load_dotenv
 from pydantic import BaseModel
-from functions.blockchain_requests import fetch_erc20_holdings_moralis,fetch_NFT_holdings_moralis
-from functions.db_requests import create_address_table, save_erc20_assets, save_nft_assets, check_table_exists, delete_erc20_assets, delete_nft_assets
+from functions.blockchain_requests import fetch_erc20_holdings_moralis, fetch_NFT_holdings_moralis
+from functions.db_requests import create_address_table, save_erc20_assets, save_nft_assets, check_table_exists, delete_erc20_assets, delete_nft_assets,save_proof_data,get_proof_data
+from functions.hashing_request import get_14_digit_hash_from_string
 import os
+
+
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -35,6 +38,10 @@ supabase = create_client(url, key)
 class ManageAssetsRequest(BaseModel):
     address: str
     blockchains: list[str]
+
+class HashRequest(BaseModel):
+    input_str: str
+
 
 # Health check endpoint
 @app.get("/health")
@@ -85,6 +92,15 @@ async def get_assets(address: str, blockchain: str):
         return {"erc20_assets": erc20_assets, "nft_assets": nft_assets}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+
+@app.post("/get_14_digit_hash")
+async def get_14_digit_hash(data: HashRequest):
+    input_str = data.input_str
+    return {"hash": get_14_digit_hash_from_string(input_str)}
+
+
 
 if __name__ == "__main__":
     import uvicorn

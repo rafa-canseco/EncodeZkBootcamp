@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { useAssets } from "../hooks/useAssets";
 import { truncateAddress, handleSelectAsset } from "../utils/helpers";
 import { Button } from "@/components/ui/button";
 import ERC20Assets from "../components/others/ERC20Assets";
 import NFTAssets from "../components/others/NFTAssets";
-import { LandingProps,  UseAssetsReturn } from "../types/index";
-
+import { LandingProps, UseAssetsReturn } from "../types/index";
+import axios from 'axios';
 
 const Landing: React.FC<LandingProps> = ({ walletAddress }) => {
+  const [bundleResult, setBundleResult] = useState<string | null>(null);
+  const [zkpHash, setZkpHash] = useState<string | null>(null);
+
   const {
     erc20Assets,
     nftAssets,
@@ -24,6 +27,24 @@ const Landing: React.FC<LandingProps> = ({ walletAddress }) => {
     handleQuantityChange,
   }: UseAssetsReturn = useAssets(walletAddress);
 
+  const handleBundleWithResult = async () => {
+    const result = await handleBundle();
+    if(result !== undefined){
+      setBundleResult(result);
+      try {
+        const response = await axios.post('http://localhost:8000/get_14_digit_hash', {
+          input_str: result,
+        });
+        console.log("API Response:", response.data); // Imprime la respuesta de la API
+        if (response.data && response.data.hash) {
+          setZkpHash(response.data.hash);
+        }
+      } catch (error) {
+        console.error('Error fetching 14-digit hash:', error);
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
       {walletAddress ? (
@@ -33,7 +54,7 @@ const Landing: React.FC<LandingProps> = ({ walletAddress }) => {
               {loading ? "Updating..." : "Update Assets"}
             </Button>
             <Button
-              onClick={handleBundle}
+              onClick={handleBundleWithResult}
               disabled={selectedAssets.length === 0 || processing}
             >
               Bundle Assets
@@ -50,6 +71,12 @@ const Landing: React.FC<LandingProps> = ({ walletAddress }) => {
           ) : (
             <>
               {message && <p className="mt-4">{message}</p>}
+              {bundleResult && (
+                <div className="mt-4">
+                  <p>Transaction Hash: {bundleResult}</p>
+                  {zkpHash && <p>Hash for ZKP: {zkpHash}</p>}
+                </div>
+              )}
               <div className="text-center text-2xl mt-4">ERC20 Assets</div>
               <ERC20Assets
                 assets={erc20Assets}

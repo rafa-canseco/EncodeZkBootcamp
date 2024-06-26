@@ -62,3 +62,4 @@ def save_nft_assets(address: str, blockchain: str, nft_assets: list):
             "token_address": asset["token_address"] if asset["token_address"] is not None else "",
             "token_id": asset["token_id"] if asset.get("token_id") is not None else ""
         }).execute()
+
