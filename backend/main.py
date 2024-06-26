@@ -4,7 +4,7 @@ from supabase import create_client
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from functions.blockchain_requests import fetch_erc20_holdings_moralis, fetch_NFT_holdings_moralis
-from functions.db_requests import create_address_table, save_erc20_assets, save_nft_assets, check_table_exists, delete_erc20_assets, delete_nft_assets,save_proof_data,get_proof_data
+from functions.db_requests import create_address_table, save_erc20_assets, save_nft_assets, check_table_exists, delete_erc20_assets, delete_nft_assets
 from functions.hashing_request import get_14_digit_hash_from_string
 import os
 
